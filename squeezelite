@@ -1,0 +1,41 @@
+#The name for the squeezelite player:
+SL_NAME="RME64|"
+
+# ALSA output device:
+DAEMON_ENABLED=1
+
+# format:  <b>:<p>:<f>:<m>, b = buffer time in ms or size in bytes, p = period count or size>
+SL_ALSA_PARAMS="80:4::1"
+
+# Default
+SL_ADDITIONAL_OPTIONS="-b 30720:51690 -V Digital"
+
+# Hi-Fidelity - Maximum fidelity and detail
+#SL_ADDITIONAL_OPTIONS="-b 30720:51690 -V Digital -R vXE::4:28:99:100:50"
+
+# Clarity – Near-top-tier clarity
+#SL_ADDITIONAL_OPTIONS="-b 30720:51690 -V Digital -R v::3:28:95:100:50"
+
+# Dynamic – Dynamic but less precise
+#SL_ADDITIONAL_OPTIONS="-b 30720:51690 -V Digital -R v::3:28:95:100:0"
+
+# Musical – Balanced and musical
+#SL_ADDITIONAL_OPTIONS="-b 30720:51690 -V Digital -R vXE::4:28:70:110:50"
+
+# Warm-Smooth – Warm and smooth
+#SL_ADDITIONAL_OPTIONS="-b 30720:51690 -V Digital -R v::3:28:85:120:50"
+
+# Warm-Punchy – Warm, punchy, less detailed
+#SL_ADDITIONAL_OPTIONS="-b 30720:51690 -V Digital -R vXE::4:28:75:120:0"
+
+# Relaxed – Relaxed but vague
+#SL_ADDITIONAL_OPTIONS="-b 30720:51690 -V Digital -R v::3:28:85:120:0"
+
+# Non-Oversampling - Warm, organic, slightly veiled highs
+#SL_ADDITIONAL_OPTIONS="-b 30720:51690 -V Digital -R vE::3:28:100:100:0"
+
+# Very High Quality Linear Phase - Neutral and transparent
+#SL_ADDITIONAL_OPTIONS="-b 30720:51690 -V Digital -R v::3:28:99:100:50"
+
+# Very High Quality Minimum Phase - Neutral with a hint of dynamism
+#SL_ADDITIONAL_OPTIONS="-b 30720:51690 -V Digital -R v::3:28:99:100:0"
