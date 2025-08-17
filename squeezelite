@@ -1,10 +1,10 @@
-#The name for the squeezelite player:
+# The name for the squeezelite player:
 SL_NAME="RME64|"
 
 # ALSA output device:
 DAEMON_ENABLED=1
 
-# format:  <b>:<p>:<f>:<m>, b = buffer time in ms or size in bytes, p = period count or size>
+# format: <b>:<p>:<f>:<m>, b = buffer time in ms or size in bytes, p = period count or size>
 SL_ALSA_PARAMS="80:4::1"
 
 # Default
