@@ -1,0 +1,11 @@
+[Unit]
+Description=Apply custom network settings for wlan0
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/apply-network-settings.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
