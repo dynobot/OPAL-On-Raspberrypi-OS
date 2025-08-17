@@ -1,0 +1,10 @@
+[Unit]
+Description=Apply custom system settings
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/apply-sys-settings.sh
+
+[Install]
+WantedBy=multi-user.target
