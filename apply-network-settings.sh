@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Wait for the network interface to be up
-/bin/sleep 5
+/bin/sleep 3
 
 # Apply network queue length
 /sbin/ifconfig wlan0 txqueuelen 2000
