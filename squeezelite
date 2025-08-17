@@ -1,7 +1,8 @@
 # The name for the squeezelite player:
-SL_NAME="RME64|"
+SL_NAME="OPAL64|"
 
 # ALSA output device:
+SL_SOUNDCARD="hw:0,0"
 DAEMON_ENABLED=1
 
 # format: <b>:<p>:<f>:<m>, b = buffer time in ms or size in bytes, p = period count or size>
