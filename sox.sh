@@ -16,8 +16,8 @@ RESET='\033[0m'
 # Ensure the script is run as root, as it needs to modify system files
 # and control the squeezelite service.
 if [ "$(id -u)" -ne 0 ]; then
-   echo "This script must be run as root. Please use 'sudo ./your_script_name.sh'." >&2
-   exit 1
+    echo "This script must be run as root. Please use 'sudo ./your_script_name.sh'." >&2
+    exit 1
 fi
 
 # Define all available sound profiles and their corresponding
@@ -40,17 +40,17 @@ PROFILES["Very High Quality Minimum Phase"]="SL_ADDITIONAL_OPTIONS=\"-b 30720:51
 # Ordered list of profile names for menu display and definition lookup.
 # This ensures that selecting '1' always maps to "Default", '2' to "Hi-Fidelity", etc.
 PROFILE_ORDER=(
-    "Default"
-    "Hi-Fidelity"
-    "Clarity"
-    "Dynamic"
-    "Musical"
-    "Warm-Smooth"
-    "Warm-Punchy"
-    "Relaxed"
-    "Non-Oversampling"
-    "Very High Quality Linear Phase"
-    "Very High Quality Minimum Phase"
+    "Default"
+    "Hi-Fidelity"
+    "Clarity"
+    "Dynamic"
+    "Musical"
+    "Warm-Smooth"
+    "Warm-Punchy"
+    "Relaxed"
+    "Non-Oversampling"
+    "Very High Quality Linear Phase"
+    "Very High Quality Minimum Phase"
 )
 
 # Define sound profile definitions as an associative array.
@@ -169,194 +169,194 @@ Tonality: Neutral with a hint of dynamism—highs are crisp, mids vibrant, bass 
 
 # Function to stop the squeezelite service.
 stop_squeezelite() {
-    echo "Stopping squeezelite..."
-    # 'systemctl stop' is used to halt the service gracefully.
-    systemctl stop squeezelite.service
-    sleep 1 # Pause briefly to allow the service to fully stop.
+    echo "Stopping squeezelite..."
+    # 'systemctl stop' is used to halt the service gracefully.
+    systemctl stop squeezelite.service
+    sleep 1 # Pause briefly to allow the service to fully stop.
 }
 
 # Function to start the squeezelite service.
 start_squeezelite() {
-    echo "Starting squeezelite..."
-    # 'systemctl start' is used to initiate the service.
-    systemctl start squeezelite.service
-    sleep 1 # Pause to give squeezelite time to start.
+    echo "Starting squeezelite..."
+    # 'systemctl start' is used to initiate the service.
+    systemctl start squeezelite.service
+    sleep 1 # Pause to give squeezelite time to start.
 }
 
 # Function to apply the selected sound profile.
 # This function handles updating the settings file and restarting the service.
 apply_profile() {
-    local profile_name="$1" # The user-friendly name of the selected profile.
-    local selected_options="${PROFILES[$profile_name]}" # The full SL_ADDITIONAL_OPTIONS string for the selected profile.
-    local sl_name_suffix="" # Variable to hold the suffix for SL_NAME.
+    local profile_name="$1" # The user-friendly name of the selected profile.
+    local selected_options="${PROFILES[$profile_name]}" # The full SL_ADDITIONAL_OPTIONS string for the selected profile.
+    local sl_name_suffix="" # Variable to hold the suffix for SL_NAME.
 
-    # If the profile is not "Default", append its name to SL_NAME.
-    if [ "$profile_name" != "Default" ]; then
-        sl_name_suffix="$profile_name"
-    fi
+    # If the profile is not "Default", append its name to SL_NAME.
+    if [ "$profile_name" != "Default" ]; then
+        sl_name_suffix="$profile_name"
+    fi
 
-    # Stop the squeezelite service before making changes to its configuration.
-    stop_squeezelite
+    # Stop the squeezelite service before making changes to its configuration.
+    stop_squeezelite
 
-    echo "Applying profile: $profile_name"
+    echo "Applying profile: $profile_name"
 
-    # 1. Update the SL_NAME line in the settings file to add/remove the profile suffix
-    # This sed command captures the part of the SL_NAME string before the pipe '|'
-    # and then replaces whatever follows the pipe (or nothing if it's just '|')
-    # with the new profile suffix.
-    sed -i "s/\(SL_NAME=\"[^|]*|\)[^\"P]*\"/\1${sl_name_suffix}\"/" "$SETTINGS_FILE"
+    # 1. Update the SL_NAME line in the settings file to add/remove the profile suffix
+    # This sed command captures the part of the SL_NAME string before the pipe '|'
+    # and then replaces whatever follows the pipe (or nothing if it's just '|')
+    # with the new profile suffix.
+    sed -i "s/\(SL_NAME=\"[^|]*|\)[^\"P]*\"/\1${sl_name_suffix}\"/" "$SETTINGS_FILE"
 
-    # 2. Comment out all existing SL_ADDITIONAL_OPTIONS lines that are currently uncommented.
-    # This sed command works by:
-    # - /regex/: Finds lines starting with 'SL_ADDITIONAL_OPTIONS='.
-    # - s/^\([^#]\)/#\1/: If the line does NOT start with '#', it captures the first
-    #   character (which would be 'S') and prepends '#' to it. This ensures
-    #   lines are commented out without adding extra '#' if already commented.
-    sed -i '/^SL_ADDITIONAL_OPTIONS=/s/^\([^#]\)/#\1/' "$SETTINGS_FILE"
+    # 2. Comment out all existing SL_ADDITIONAL_OPTIONS lines that are currently uncommented.
+    # This sed command works by:
+    # - /regex/: Finds lines starting with 'SL_ADDITIONAL_OPTIONS='.
+    # - s/^\([^#]\)/#\1/: If the line does NOT start with '#', it captures the first
+    #   character (which would be 'S') and prepends '#' to it. This ensures
+    #   lines are commented out without adding extra '#' if already commented.
+    sed -i '/^SL_ADDITIONAL_OPTIONS=/s/^\([^#]\)/#\1/' "$SETTINGS_FILE"
 
-    # 3. Uncomment the selected profile line.
-    # First, escape any special characters in the selected_options string
-    # so that 'sed' interprets it literally and correctly.
-    local escaped_options=$(echo "$selected_options" | sed -e 's/[\/&]/\\&/g')
-    # This sed command finds the specific line (which might be commented out)
-    # and removes any leading '#' characters, effectively uncommenting it.
-    sed -i "/^#*${escaped_options}/s/^#//g" "$SETTINGS_FILE"
+    # 3. Uncomment the selected profile line.
+    # First, escape any special characters in the selected_options string
+    # so that 'sed' interprets it literally and correctly.
+    local escaped_options=$(echo "$selected_options" | sed -e 's/[\/&]/\\&/g')
+    # This sed command finds the specific line (which might be commented out)
+    # and removes any leading '#' characters, effectively uncommenting it.
+    sed -i "/^#*${escaped_options}/s/^#//g" "$SETTINGS_FILE"
 
-    # Restart the squeezelite service after applying the configuration changes.
-    start_squeezelite
+    # Restart the squeezelite service after applying the configuration changes.
+    start_squeezelite
 
-    echo "Profile '$profile_name' applied successfully."
-    display_menu # Cycle back to the main menu after applying a profile.
+    echo "Profile '$profile_name' applied successfully."
+    display_menu # Cycle back to the main menu after applying a profile.
 }
 
 # Function to handle displaying a definition and subsequent choices.
 handle_definition_view() {
-    local profile_name_to_show="$1"
+    local profile_name_to_show="$1"
 
-    # Display the definition (which now includes the BOLD/RESET codes)
-    echo -e "${PROFILE_DEFINITIONS[$profile_name_to_show]}"
-    echo "-----------------------------------" # Add this separator after the bolded definition
-    echo "" # Add a newline for better readability.
+    # Display the definition (which now includes the BOLD/RESET codes)
+    echo -e "${PROFILE_DEFINITIONS[$profile_name_to_show]}"
+    echo "-----------------------------------" # Add this separator after the bolded definition
+    echo "" # Add a newline for better readability.
 
-    # Present new choices.
-    echo "What would you like to do next?"
-    echo "  1. Apply '$profile_name_to_show' sound profile"
-    echo "  2. Show complete list of profiles"
-    echo "  3. Exit"
-    read -rp "Enter your choice: " next_action_choice
-    echo "" # Add a newline for better readability.
+    # Present new choices.
+    echo "What would you like to do next?"
+    echo "  1. Apply '$profile_name_to_show' sound profile"
+    echo "  2. Show complete list of profiles"
+    echo "  3. Exit"
+    read -rp "Enter your choice: " next_action_choice
+    echo "" # Add a newline for better readability.
 
-    case $next_action_choice in
-        1) apply_profile "$profile_name_to_show" ;;
-        2) display_menu ;; # Go back to the main menu.
-        3) echo "Exiting without changes. " ;;
-        *) echo "Invalid choice. Please enter 1, 2, or 3. " ; handle_definition_view "$profile_name_to_show" ;; # Re-prompt for valid input.
-    esac
+    case $next_action_choice in
+        1) apply_profile "$profile_name_to_show" ;;
+        2) display_menu ;; # Go back to the main menu.
+        3) echo "Exiting without changes. " ;;
+        *) echo "Invalid choice. Please enter 1, 2, or 3. " ; handle_definition_view "$profile_name_to_show" ;; # Re-prompt for valid input.
+    esac
 }
 
 # Function to display the interactive menu to the user.
 display_menu() {
-    local max_item_display_length=0
-    # Calculate the max length for "X. ProfileName" and "XX. Exit (no change)"
-    for ((idx=0; idx < ${#PROFILE_ORDER[@]}; idx++)); do
-        local item_str="$((idx+1)). ${PROFILE_ORDER[idx]}"
-        if (( ${#item_str} > max_item_display_length )); then
-            max_item_display_length=${#item_str}
-        fi
-    done
-    # Also check the "Exit" option
-    local exit_str="$(( ${#PROFILE_ORDER[@]} + 1 )). Exit (no change)"
-    if (( ${#exit_str} > max_item_display_length )); then
-        max_item_display_length=${#exit_str}
-    fi
+    local max_item_display_length=0
+    # Calculate the max length for "X. ProfileName" and "XX. Exit (no change)"
+    for ((idx=0; idx < ${#PROFILE_ORDER[@]}; idx++)); do
+        local item_str="$((idx+1)). ${PROFILE_ORDER[idx]}"
+        if (( ${#item_str} > max_item_display_length )); then
+            max_item_display_length=${#item_str}
+        fi
+    done
+    # Also check the "Exit" option
+    local exit_str="$(( ${#PROFILE_ORDER[@]} + 1 )). Exit (no change)"
+    if (( ${#exit_str} > max_item_display_length )); then
+        max_item_display_length=${#exit_str}
+    fi
 
-    # Number of spaces between the two columns
-    local inter_column_gap=4
+    # Number of spaces between the two columns
+    local inter_column_gap=4
 
-    local menu_header="Squeezelite Sound Profile Selector "
-    # Total width includes two columns (each max_item_display_length wide) + the fixed gap + initial 2 spaces
-    local total_display_width=$(( (max_item_display_length * 2) + inter_column_gap + 2 ))
+    local menu_header="Squeezelite Sound Profile Selector "
+    # Total width includes two columns (each max_item_display_length wide) + the fixed gap + initial 2 spaces
+    local total_display_width=$(( (max_item_display_length * 2) + inter_column_gap + 2 ))
 
-    # Adjust total_display_width if header is wider
-    if (( ${#menu_header} + 4 > total_display_width )); then # +4 for the " = " on each side (min needed for padding)
-        total_display_width=$(( ${#menu_header} + 4 ))
-    fi
+    # Adjust total_display_width if header is wider
+    if (( ${#menu_header} + 4 > total_display_width )); then # +4 for the " = " on each side (min needed for padding)
+        total_display_width=$(( ${#menu_header} + 4 ))
+    fi
 
-    # Recalculate header padding based on the potentially adjusted total_display_width
-    local header_padding_len=$(( (total_display_width - ${#menu_header} - 2) / 2 )) # -2 for the spaces around header text
-    local header_line_left=$(printf "%${header_padding_len}s" | tr ' ' '=')
-    local header_line_right=$(printf "%$((total_display_width - ${#menu_header} - header_padding_len - 2))s" | tr ' ' '=') # -2 for spaces.
+    # Recalculate header padding based on the potentially adjusted total_display_width
+    local header_padding_len=$(( (total_display_width - ${#menu_header} - 2) / 2 )) # -2 for the spaces around header text
+    local header_line_left=$(printf "%${header_padding_len}s" | tr ' ' '=')
+    local header_line_right=$(printf "%$((total_display_width - ${#menu_header} - header_padding_len - 2))s" | tr ' ' '=') # -2 for spaces.
 
-    # Print top border and header
-    printf "%${total_display_width}s\n" | tr ' ' '='
-    echo "${header_line_left} ${menu_header} ${header_line_right}"
-    printf "%${total_display_width}s\n" | tr ' ' '='
+    # Print top border and header
+    printf "%${total_display_width}s\n" | tr ' ' '='
+    echo "${header_line_left} ${menu_header} ${header_line_right}"
+    printf "%${total_display_width}s\n" | tr ' ' '='
 
-    echo "Choose a sound profile:"
+    echo "Choose a sound profile:"
 
-    local num_profiles=${#PROFILE_ORDER[@]}
-    local profiles_per_column=$(( (num_profiles + 1) / 2 )) # Number of items per column, including Exit option
+    local num_profiles=${#PROFILE_ORDER[@]}
+    local profiles_per_column=$(( (num_profiles + 1) / 2 )) # Number of items per column, including Exit option
 
-    for ((i=0; i < profiles_per_column; i++)); do
-        local left_item_index=$((i + 1))
-        local right_item_index=$((i + 1 + profiles_per_column))
+    for ((i=0; i < profiles_per_column; i++)); do
+        local left_item_index=$((i + 1))
+        local right_item_index=$((i + 1 + profiles_per_column))
 
-        local left_display_str=""
-        if (( left_item_index <= num_profiles )); then
-            left_display_str="${left_item_index}. ${PROFILE_ORDER[left_item_index-1]}"
-        fi
+        local left_display_str=""
+        if (( left_item_index <= num_profiles )); then
+            left_display_str="${left_item_index}. ${PROFILE_ORDER[left_item_index-1]}"
+        fi
 
-        local right_display_str=""
-        if (( right_item_index <= num_profiles )); then
-            right_display_str="${right_item_index}. ${PROFILE_ORDER[right_item_index-1]}"
-        elif (( right_item_index == num_profiles + 1 )); then # This is the explicit "Exit" option
-            right_display_str="${right_item_index}. Exit (no change)"
-        fi
+        local right_display_str=""
+        if (( right_item_index <= num_profiles )); then
+            right_display_str="${right_item_index}. ${PROFILE_ORDER[right_item_index-1]}"
+        elif (( right_item_index == num_profiles + 1 )); then # This is the explicit "Exit" option
+            right_display_str="${right_item_index}. Exit (no change)"
+        fi
 
-        # Print each row: 2 spaces, left column padded, inter-column gap, right column padded.
-        printf "  %-*s%*s%-*s\n" \
-            "$max_item_display_length" "$left_display_str" \
-            "$inter_column_gap" "" \
-            "$max_item_display_length" "$right_display_str"
-    done
+        # Print each row: 2 spaces, left column padded, inter-column gap, right column padded.
+        printf "  %-*s%*s%-*s\n" \
+            "$max_item_display_length" "$left_display_str" \
+            "$inter_column_gap" "" \
+            "$max_item_display_length" "$right_display_str"
+    done
 
-    printf "%${total_display_width}s\n" | tr ' ' '='
-    read -rp "Enter your choice (e.g., '2' to apply, '2x' for definition): " choice # Prompt the user for their choice.
-    echo "" # Add a newline for better readability.
+    printf "%${total_display_width}s\n" | tr ' ' '='
+    read -rp "Enter your choice (e.g., '2' to apply, '2x' for definition): " choice # Prompt the user for their choice.
+    echo "" # Add a newline for better readability.
 
-    # Check if the input ends with 'x' for definition lookup.
-    if [[ "$choice" =~ x$ ]]; then
-        local num_choice="${choice%x}" # Remove 'x' from the choice.
-        if [[ "$num_choice" =~ ^[0-9]+$ ]]; then # Ensure it's a number.
-            if (( num_choice >= 1 && num_choice <= ${#PROFILE_ORDER[@]} )); then
-                # Get the profile name corresponding to the numeric choice.
-                local profile_name="${PROFILE_ORDER[$((num_choice - 1))]}"
-                handle_definition_view "$profile_name" # Call new function to handle definition view and subsequent choices.
-            else
-                echo "Invalid choice for definition. Please enter a valid number from the list (e.g., '2x'). "
-                display_menu # Re-display main menu after error.
-            fi
-        else
-            echo "Invalid format for definition lookup. Please use a number followed by 'x' (e.g., '2x'). "
-            display_menu # Re-display main menu after error.
-        fi
-        return # Exit the function after handling definition/error.
-    fi
+    # Check if the input ends with 'x' for definition lookup.
+    if [[ "$choice" =~ x$ ]]; then
+        local num_choice="${choice%x}" # Remove 'x' from the choice.
+        if [[ "$num_choice" =~ ^[0-9]+$ ]]; then # Ensure it's a number.
+            if (( num_choice >= 1 && num_choice <= ${#PROFILE_ORDER[@]} )); then
+                # Get the profile name corresponding to the numeric choice.
+                local profile_name="${PROFILE_ORDER[$((num_choice - 1))]}"
+                handle_definition_view "$profile_name" # Call new function to handle definition view and subsequent choices.
+            else
+                echo "Invalid choice for definition. Please enter a valid number from the list (e.g., '2x'). "
+                display_menu # Re-display main menu after error.
+            fi
+        else
+            echo "Invalid format for definition lookup. Please use a number followed by 'x' (e.g., '2x'). "
+            display_menu # Re-display main menu after error.
+        fi
+        return # Exit the function after handling definition/error.
+    fi
 
-    # Handle numeric choices for applying profiles.
-    if [[ "$choice" =~ ^[0-9]+$ ]]; then # Check if the input is purely numeric
-        if (( choice >= 1 && choice <= ${#PROFILE_ORDER[@]} )); then
-            apply_profile "${PROFILE_ORDER[$((choice - 1))]}"
-        elif (( choice == ${#PROFILE_ORDER[@]} + 1 )); then # This is the Exit option
-            echo "Exiting without changes. "
-        else
-            echo "Invalid choice. Please enter a number from the list. "
-            display_menu
-        fi
-    else
-        echo "Invalid choice. Please enter a number from the list. "
-        display_menu
-    fi
+    # Handle numeric choices for applying profiles.
+    if [[ "$choice" =~ ^[0-9]+$ ]]; then # Check if the input is purely numeric
+        if (( choice >= 1 && choice <= ${#PROFILE_ORDER[@]} )); then
+            apply_profile "${PROFILE_ORDER[$((choice - 1))]}"
+        elif (( choice == ${#PROFILE_ORDER[@]} + 1 )); then # This is the Exit option
+            echo "Exiting without changes. "
+        else
+            echo "Invalid choice. Please enter a number from the list. "
+            display_menu
+        fi
+    else
+        echo "Invalid choice. Please enter a number from the list. "
+        display_menu
+    fi
 }
 
 # Start the script by displaying the menu.
