@@ -29,10 +29,10 @@ OVERRIDE_FILE="$OVERRIDE_DIR/override.conf"
 SERVICE_FILE="/etc/systemd/system/apply-sys-settings.service"
 NETWORK_SERVICE_FILE="/etc/systemd/system/network-settings.service"
 
-# --- NEW ADDITION ---
 SYSCTL_DIR="/etc/sysctl.d"
 SYSCTL_CONF_FILE="$SYSCTL_DIR/99-network-tuning.conf"
-# --- END NEW ADDITION ---
+
+ALIAS_FILE="/etc/profile.d/opal-aliases.sh"
 
 # Text to add to cmdline.txt
 CMDLINE_TEXT=" isolcpus=3 nohz_full=3"
@@ -184,6 +184,37 @@ fi
 
 echo "--------------------------------------------------------"
 
+# --- NEW ADDITION START HERE ---
+# --- Update Squeezelite name ---
+echo "--- Configuring Squeezelite player name ---"
+
+# Check if squeezelite file exists before trying to modify it
+if [ -f "$SQUEEZELITE_FILE" ]; then
+    # Get the current name from the file
+    CURRENT_NAME=$(sudo grep -oP 'SL_NAME="\K[^|]+' "$SQUEEZELITE_FILE")
+
+    if [ -n "$CURRENT_NAME" ]; then
+        echo "Current Squeezelite name is: $CURRENT_NAME"
+        read -p "Enter a new name for your player (e.g., RaspberryPi): " NEW_NAME
+        
+        # Check if the user entered a name
+        if [ -n "$NEW_NAME" ]; then
+            # Use sed to replace the old name with the new one
+            sudo sed -i "s/SL_NAME=\"$CURRENT_NAME|/SL_NAME=\"$NEW_NAME|/" "$SQUEEZELITE_FILE"
+            echo "Successfully updated Squeezelite name to: $NEW_NAME"
+        else
+            echo "No new name entered. The name will remain $CURRENT_NAME."
+        fi
+    else
+        echo "Could not find the 'SL_NAME' line in the squeezelite file. Skipping name update."
+    fi
+else
+    echo "Squeezelite file not found at $SQUEEZELITE_FILE. Skipping name configuration."
+fi
+
+echo "--------------------------------------------------------"
+# --- NEW ADDITION ENDS HERE ---
+
 # --- Create directory and download override.conf ---
 download_and_install_with_prompt "$DOWNLOAD_URL_OVERRIDE" "$OVERRIDE_FILE" "false"
 if [ $? -ne 0 ]; then echo "Failed to process override.conf. Exiting." && exit 1; fi
@@ -235,7 +266,6 @@ fi
 
 echo "--------------------------------------------------------"
 
-# --- NEW ADDITIONS START HERE ---
 # --- Download and install 99-network-tuning.conf ---
 download_and_install_with_prompt "$DOWNLOAD_URL_SYSCTL_CONF" "$SYSCTL_CONF_FILE" "false"
 if [ $? -eq 0 ]; then
@@ -247,6 +277,37 @@ if [ $? -eq 0 ]; then
     fi
 fi
 
+echo "--------------------------------------------------------"
+
+# --- Configure system-wide aliases ---
+echo "--- Configuring system-wide aliases ---"
+
+# Create the alias file if it doesn't exist
+if [ ! -f "$ALIAS_FILE" ]; then
+    echo "Creating alias file '$ALIAS_FILE'..."
+    sudo touch "$ALIAS_FILE"
+    sudo chmod 644 "$ALIAS_FILE" # Standard permissions for profile scripts
+fi
+
+# Add alias for sox.sh if it doesn't exist in the alias file
+# The alias definition includes the full path to the executable script.
+if ! grep -q "alias sox='${BIN_FILE_SOX}'" "$ALIAS_FILE"; then
+    echo "Adding alias 'sox' for '$BIN_FILE_SOX'..."
+    echo "alias sox='${BIN_FILE_SOX}'" | sudo tee -a "$ALIAS_FILE" > /dev/null
+else
+    echo "Alias 'sox' already exists in '$ALIAS_FILE'. Skipping."
+fi
+
+# Add alias for endpoint_switcher.sh if it doesn't exist in the alias file
+# The alias definition includes the full path to the executable script.
+if ! grep -q "alias endpoint='${BIN_FILE_ENDPOINT_SWITCHER}'" "$ALIAS_FILE"; then
+    echo "Adding alias 'endpoint' for '$BIN_FILE_ENDPOINT_SWITCHER'..."
+    echo "alias endpoint='${BIN_FILE_ENDPOINT_SWITCHER}'" | sudo tee -a "$ALIAS_FILE" > /dev/null
+else
+    echo "Alias 'endpoint' already exists in '$ALIAS_FILE'. Skipping."
+fi
+
+echo "Aliases configured. They will be available in new shell sessions."
 echo "--------------------------------------------------------"
 
 # --- Update systemd services ---
