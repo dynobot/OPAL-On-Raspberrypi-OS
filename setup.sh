@@ -10,7 +10,7 @@ else
     NON_INTERACTIVE=false
 fi
 
-# Function to prompt the user
+# Function to prompt the user and run a command
 prompt_and_run() {
     local prompt_message="$1"
     local command_to_run="$2"
@@ -40,7 +40,6 @@ prompt_and_run "1. Would you like to update and upgrade all packages?" "sudo apt
 prompt_and_run "2. Would you like to install Squeezelite?" "sudo apt install -y squeezelite"
 
 # Step 3: Download Roon Bridge Installer
-# Corrected: Removed the erroneous backtick after .sh
 prompt_and_run "3. Would you like to download the Roon Bridge installer?" "wget https://download.roonlabs.com/builds/roonbridge-installer-linuxarmv8.sh"
 
 # Step 4: Install Roon Bridge
@@ -50,5 +49,9 @@ if [ -f "roonbridge-installer-linuxarmv8.sh" ]; then
 else
     echo "Roon Bridge installer not found. Skipping installation."
 fi
+
+# Step 5: Build OPAL
+# This step downloads, makes executable, and runs the OPAL build script
+prompt_and_run "5. Would you like to build OPAL now?" "wget https://github.com/dynobot/OPAL-On-Raspberrypi-OS/raw/main/build_opal.sh && chmod +x build_opal.sh && ./build_opal.sh"
 
 echo "Script finished."
