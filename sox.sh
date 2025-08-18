@@ -200,11 +200,12 @@ apply_profile() {
 
     echo "Applying profile: $profile_name"
 
-    # 1. Update the SL_NAME line in the settings file to add/remove the profile suffix
-    # This sed command captures the part of the SL_NAME string before the pipe '|'
-    # and then replaces whatever follows the pipe (or nothing if it's just '|')
-    # with the new profile suffix.
-    sed -i "s/\(SL_NAME=\"[^|]*|\)[^\"P]*\"/\1${sl_name_suffix}\"/" "$SETTINGS_FILE"
+    # --- CORRECTED SED COMMAND ---
+    # This command is now more robust and correctly updates only the suffix of the name
+    # without duplicating the "SL_NAME=" part.
+    # It captures the part of the SL_NAME string before the pipe '|' and replaces
+    # everything after it up to the closing quote.
+    sudo sed -i "s/\(^SL_NAME=\"[^|]*|\)[^\"]*\"$/\1${sl_name_suffix}\"/" "$SETTINGS_FILE"
 
     # 2. Comment out all existing SL_ADDITIONAL_OPTIONS lines that are currently uncommented.
     # This sed command works by:
