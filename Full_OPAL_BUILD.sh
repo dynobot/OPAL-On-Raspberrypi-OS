@@ -60,5 +60,4 @@ else
     prompt_and_run "5. Would you like to build OPAL now?" "curl -O -L https://github.com/dynobot/OPAL-On-Raspberrypi-OS/raw/main/build_opal.sh && chmod +x build_opal.sh && ./build_opal.sh"
 fi
 
-
 echo "Script finished."
